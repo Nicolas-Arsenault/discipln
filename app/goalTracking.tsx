@@ -422,7 +422,7 @@ const goalTracking = () => {
             <Text className="text-xs text-gray-500">active days</Text>
           </View>
           <View className="items-center">
-            <Text className="text-sm font-bold text-blue-600">
+            <Text className="text-sm font-bold text-gray-900">
               {Math.round((yearData.filter(day => day.intensity > 0).length / 180) * 100)}%
             </Text>
             <Text className="text-xs text-gray-500">consistency</Text>
@@ -522,7 +522,7 @@ const goalTracking = () => {
               <Text className="text-sm text-gray-500">Total Days</Text>
             </View>
             <View className="bg-white rounded-xl p-4 flex-1 ml-2 shadow-sm border border-gray-100">
-              <Text className="text-2xl font-bold text-blue-600">
+              <Text className="text-2xl font-bold text-gray-900">
                 {goals.length > 0 ? Math.round(goals.reduce((acc, goal) => acc + getGoalStats(goal.id).percentage, 0) / goals.length) : 0}%
               </Text>
               <Text className="text-sm text-gray-500">Avg Progress</Text>
@@ -626,11 +626,11 @@ const goalTracking = () => {
                       <Text className="text-xs text-gray-500">Day Streak</Text>
                     </View>
                     <View className="items-center">
-                      <Text className="text-lg font-bold text-blue-600">{Math.round(stats.percentage)}%</Text>
+                      <Text className="text-lg font-bold text-gray-900">{Math.round(stats.percentage)}%</Text>
                       <Text className="text-xs text-gray-500">Complete</Text>
                     </View>
                     <View className="items-center">
-                      <Text className="text-lg font-bold text-purple-600">{stats.completedDays}</Text>
+                      <Text className="text-lg font-bold text-gray-900">{stats.completedDays}</Text>
                       <Text className="text-xs text-gray-500">Total Days</Text>
                     </View>
                   </View>

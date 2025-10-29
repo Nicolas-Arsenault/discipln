@@ -71,6 +71,11 @@ export default function ActivitySheet({
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }).start();
+      
+      // Ensure Monday is selected when opening for new activity
+      if (mode === 'add') {
+        onChangeDay('monday');
+      }
     } else {
       Animated.timing(slideAnim, {
         toValue: 400,
@@ -79,7 +84,7 @@ export default function ActivitySheet({
         useNativeDriver: true,
       }).start();
     }
-  }, [visible]);
+  }, [visible, mode, onChangeDay]);
 
   const handleDelete = () => {
     Alert.alert(

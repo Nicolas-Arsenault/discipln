@@ -53,7 +53,8 @@ export default function Index() {
     setStartMinute(0);
     setEndHour(10);
     setEndMinute(0);
-    setActivityDay(day || selectedDay);
+    // ALWAYS set to Monday for new activities to guarantee a selection
+    setActivityDay('monday');
     setSelectedGoalId(undefined);
     setSheetVisible(true);
   };
@@ -126,7 +127,7 @@ export default function Index() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+    <View style={{ flex: 1, backgroundColor: '#f9fafb' }}>
       <ScrollView 
         style={{ flex: 1 }} 
         showsVerticalScrollIndicator={false}
@@ -138,7 +139,7 @@ export default function Index() {
           <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 12 }}>
             <View style={{ 
               flexDirection: 'row', 
-              backgroundColor: '#F1F5F9', 
+              backgroundColor: '#f3f4f6', 
               borderRadius: 10, 
               padding: 3 
             }}>
@@ -148,12 +149,12 @@ export default function Index() {
                   paddingHorizontal: 16,
                   paddingVertical: 6,
                   borderRadius: 7,
-                  backgroundColor: viewMode === 'day' ? '#4F46E5' : 'transparent',
+                  backgroundColor: viewMode === 'day' ? '#111827' : 'transparent',
                 }}
               >
                 <Text style={{
                   fontWeight: '600',
-                  color: viewMode === 'day' ? '#FFFFFF' : '#64748B',
+                  color: viewMode === 'day' ? '#FFFFFF' : '#6b7280',
                   fontSize: 13
                 }}>
                   Day View
@@ -165,12 +166,12 @@ export default function Index() {
                   paddingHorizontal: 16,
                   paddingVertical: 6,
                   borderRadius: 7,
-                  backgroundColor: viewMode === 'week' ? '#4F46E5' : 'transparent',
+                  backgroundColor: viewMode === 'week' ? '#111827' : 'transparent',
                 }}
               >
                 <Text style={{
                   fontWeight: '600',
-                  color: viewMode === 'week' ? '#FFFFFF' : '#64748B',
+                  color: viewMode === 'week' ? '#FFFFFF' : '#6b7280',
                   fontSize: 13
                 }}>
                   Week View
@@ -195,8 +196,8 @@ export default function Index() {
                       paddingVertical: 8,
                       marginHorizontal: 2,
                       borderRadius: 10,
-                      backgroundColor: selectedDay === day ? '#4F46E5' : '#F8FAFC',
-                      shadowColor: selectedDay === day ? '#4F46E5' : '#000',
+                      backgroundColor: selectedDay === day ? '#111827' : '#f3f4f6',
+                      shadowColor: selectedDay === day ? '#111827' : '#000',
                       shadowOpacity: selectedDay === day ? 0.25 : 0.08,
                       shadowRadius: selectedDay === day ? 6 : 3,
                       shadowOffset: { width: 0, height: selectedDay === day ? 3 : 1 },
@@ -205,7 +206,7 @@ export default function Index() {
                   >
                     <Text style={{ 
                       fontWeight: selectedDay === day ? '700' : '600', 
-                      color: selectedDay === day ? '#FFFFFF' : '#64748B',
+                      color: selectedDay === day ? '#FFFFFF' : '#6b7280',
                       fontSize: 13,
                       textTransform: 'capitalize'
                     }}>

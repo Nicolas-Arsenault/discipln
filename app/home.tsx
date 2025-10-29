@@ -101,65 +101,38 @@ export default function Home() {
   const completedToday = Object.values(todayProgress).filter(Boolean).length;
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
-      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+    <View className="flex-1 bg-gray-50">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={{ paddingHorizontal: 20, paddingTop: insets.top + 8, paddingBottom: 12 }}>
-          <Text style={{ 
-            fontSize: 24, 
-            fontWeight: '700', 
-            color: '#111827', 
-            marginBottom: 6, 
-            textAlign: 'center',
-            letterSpacing: -0.5 
-          }}>
+        <View className="px-5 pb-3" style={{ paddingTop: insets.top + 8 }}>
+          <Text className="text-2xl font-bold text-gray-900 mb-1.5 text-center tracking-tight">
             Daily Check-in
           </Text>
-          <Text style={{ 
-            fontSize: 14, 
-            color: '#64748B', 
-            textAlign: 'center',
-            fontWeight: '500'
-          }}>
+          <Text className="text-sm text-gray-500 text-center font-medium">
             {formatDate(new Date())}
           </Text>
         </View>
 
         {/* Progress Summary */}
         {goals.length > 0 && (
-          <View style={{ paddingHorizontal: 20, marginBottom: 16 }}>
-            <View style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: 16,
-              padding: 16,
-              shadowColor: '#000',
-              shadowOpacity: 0.08,
-              shadowRadius: 8,
-              shadowOffset: { width: 0, height: 2 },
-              borderWidth: 1,
-              borderColor: '#E2E8F0'
-            }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-                <View style={{
-                  backgroundColor: '#EEF2FF',
-                  borderRadius: 12,
-                  padding: 8,
-                  marginRight: 12
-                }}>
-                  <Ionicons name="checkmark-circle" size={24} color="#4F46E5" />
+          <View className="px-5 mb-4">
+            <View className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+              <View className="flex-row items-center mb-3">
+                <View className="bg-gray-100 rounded-xl p-2 mr-3">
+                  <Ionicons name="checkmark-circle" size={24} color="#22c55e" />
                 </View>
-                <Text style={{ fontSize: 18, fontWeight: '700', color: '#1E293B', flex: 1 }}>
+                <Text className="text-lg font-bold text-gray-900 flex-1">
                   Today's Progress
                 </Text>
               </View>
-              <Text style={{ fontSize: 14, color: '#64748B', marginBottom: 16 }}>
+              <Text className="text-sm text-gray-500 mb-4">
                 Keep up the momentum! Track your daily goal achievements.
               </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ fontSize: 28, fontWeight: '800', color: '#4F46E5', marginRight: 8 }}>
+              <View className="flex-row items-center">
+                <Text className="text-3xl font-bold text-green-600 mr-2">
                   {completedToday}
                 </Text>
-                <Text style={{ fontSize: 16, color: '#64748B' }}>
+                <Text className="text-base text-gray-500">
                   of {goals.length} goals completed
                 </Text>
               </View>
@@ -168,72 +141,30 @@ export default function Home() {
         )}
 
         {/* Goals List */}
-        <View style={{ paddingHorizontal: 20, paddingBottom: 80 }}>
+        <View className="px-5 pb-20">
           {goals.length === 0 ? (
-            <View style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: 20,
-              padding: 32,
-              alignItems: 'center',
-              shadowColor: '#000',
-              shadowOpacity: 0.08,
-              shadowRadius: 12,
-              shadowOffset: { width: 0, height: 4 },
-              borderWidth: 1,
-              borderColor: '#E2E8F0'
-            }}>
-              <View style={{
-                backgroundColor: '#F1F5F9',
-                borderRadius: 20,
-                padding: 16,
-                marginBottom: 20
-              }}>
-                <Ionicons name="flag-outline" size={32} color="#64748B" />
+            <View className="bg-white rounded-2xl p-8 items-center shadow-sm border border-gray-100">
+              <View className="bg-gray-100 rounded-full p-4 mb-5">
+                <Ionicons name="flag-outline" size={32} color="#6b7280" />
               </View>
-              <Text style={{ 
-                fontSize: 20, 
-                fontWeight: '700', 
-                color: '#1E293B', 
-                marginBottom: 8,
-                textAlign: 'center'
-              }}>
+              <Text className="text-xl font-bold text-gray-900 mb-2 text-center">
                 No Goals Yet
               </Text>
-              <Text style={{ 
-                fontSize: 16, 
-                color: '#64748B', 
-                textAlign: 'center', 
-                marginBottom: 24,
-                lineHeight: 24
-              }}>
+              <Text className="text-base text-gray-500 text-center mb-6 leading-6">
                 Create your first goal to start tracking your daily progress and build lasting habits.
               </Text>
               <Pressable
                 onPress={() => router.push('/goalTracking')}
-                style={{
-                  backgroundColor: '#4F46E5',
-                  borderRadius: 12,
-                  paddingHorizontal: 24,
-                  paddingVertical: 12,
-                  shadowColor: '#4F46E5',
-                  shadowOpacity: 0.25,
-                  shadowRadius: 8,
-                  shadowOffset: { width: 0, height: 4 }
-                }}
+                className="bg-gray-900 rounded-xl px-6 py-3"
               >
-                <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 16 }}>
+                <Text className="text-white font-semibold text-base">
                   Create Your First Goal
                 </Text>
               </Pressable>
             </View>
           ) : (
             <>
-              <Text style={{ 
-                fontSize: 18, 
-                fontWeight: '700', 
-                color: '#1E293B', 
-                marginBottom: 16 
-              }}>
+              <Text className="text-lg font-bold text-gray-900 mb-4">
                 Which goals have you worked on today?
               </Text>
               
@@ -244,28 +175,15 @@ export default function Home() {
                   <Pressable
                     key={goal.id}
                     onPress={() => toggleGoalProgress(goal.id)}
-                    style={{
-                      backgroundColor: '#FFFFFF',
-                      borderRadius: 16,
-                      padding: 16,
-                      marginBottom: 12,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      shadowColor: '#000',
-                      shadowOpacity: 0.08,
-                      shadowRadius: 8,
-                      shadowOffset: { width: 0, height: 2 },
-                      borderWidth: 2,
-                      borderColor: isCompleted ? '#10B981' : '#E2E8F0'
-                    }}
+                    className={`bg-white rounded-2xl p-4 mb-3 flex-row items-center shadow-sm border-2 ${
+                      isCompleted ? 'border-green-500' : 'border-gray-100'
+                    }`}
                   >
                     {/* Category Icon */}
-                    <View style={{
-                      backgroundColor: getCategoryColor(goal.category) + '20',
-                      borderRadius: 12,
-                      padding: 10,
-                      marginRight: 16
-                    }}>
+                    <View 
+                      className="rounded-xl p-2.5 mr-4"
+                      style={{ backgroundColor: getCategoryColor(goal.category) + '20' }}
+                    >
                       <Ionicons 
                         name={getCategoryIcon(goal.category)} 
                         size={20} 
@@ -274,44 +192,28 @@ export default function Home() {
                     </View>
 
                     {/* Goal Content */}
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ 
-                        fontSize: 16, 
-                        fontWeight: '700', 
-                        color: '#1E293B',
-                        marginBottom: 4
-                      }}>
+                    <View className="flex-1">
+                      <Text className="text-base font-bold text-gray-900 mb-1">
                         {goal.title}
                       </Text>
                       {goal.description && (
-                        <Text style={{ 
-                          fontSize: 14, 
-                          color: '#64748B',
-                          marginBottom: 4
-                        }}>
+                        <Text className="text-sm text-gray-500 mb-1">
                           {goal.description}
                         </Text>
                       )}
-                      <Text style={{ 
-                        fontSize: 12, 
-                        color: '#64748B',
-                        textTransform: 'capitalize'
-                      }}>
+                      <Text className="text-xs text-gray-500 capitalize">
                         {goal.category} • {goal.targetDays} days target
                       </Text>
                     </View>
 
                     {/* Checkbox */}
-                    <View style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: 14,
-                      borderWidth: 2,
-                      borderColor: isCompleted ? '#10B981' : '#CBD5E1',
-                      backgroundColor: isCompleted ? '#10B981' : '#FFFFFF',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
+                    <View 
+                      className={`w-7 h-7 rounded-full border-2 items-center justify-center ${
+                        isCompleted 
+                          ? 'border-green-500 bg-green-500' 
+                          : 'border-gray-300 bg-white'
+                      }`}
+                    >
                       {isCompleted && (
                         <Ionicons name="checkmark" size={16} color="#FFFFFF" />
                       )}
