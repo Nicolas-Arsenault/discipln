@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import ActivitySheet from '../components/activity/ActivitySheet';
 import ActivityTimeline from '../components/activity/ActivityTimeline';
+import WeeklyGrid from '../components/activity/WeeklyGrid';
 import FloatingActionButton from '../components/ui/FloatingActionButton';
 import { useActivities } from '../hooks/useActivities';
 import { useGoals } from '../hooks/useGoals';
@@ -15,6 +16,7 @@ const minutes = [0, 15, 30, 45];
 
 export default function Index() {
   const [selectedDay, setSelectedDay] = useState<WeekDay>('monday');
+  const [viewMode, setViewMode] = useState<'day' | 'week'>('day');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [activityTitle, setActivityTitle] = useState('');
   const [activityDay, setActivityDay] = useState<WeekDay>('monday');
@@ -25,7 +27,7 @@ export default function Index() {
   const [selectedGoalId, setSelectedGoalId] = useState<number | undefined>(undefined);
   const [editingActivity, setEditingActivity] = useState<RoutineActivity | null>(null);
   const [sheetVisible, setSheetVisible] = useState(false);
-  const { addActivity, updateActivity, deleteActivity, getActivitiesForDay, loadActivities } = useActivities();
+  const { addActivity, updateActivity, deleteActivity, getActivitiesForDay, activities, loadActivities } = useActivities();
   const { goals, loadGoalsAndProgress } = useGoals();
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export default function Index() {
     }, [loadGoalsAndProgress])
   );
 
-  const openAddSheet = async () => {
+  const openAddSheet = async (day?: WeekDay) => {
     // Refresh goals when opening the sheet
     await loadGoalsAndProgress();
     setEditingActivity(null);
@@ -49,13 +51,13 @@ export default function Index() {
     setStartMinute(0);
     setEndHour(10);
     setEndMinute(0);
-    setActivityDay(selectedDay);
+    setActivityDay(day || selectedDay);
     setSelectedGoalId(undefined);
     setSheetVisible(true);
   };
 
   const openEditSheet = (activityId: number) => {
-    const activity = getActivitiesForDay(selectedDay).find(a => a.id === activityId);
+    const activity = activities.find(a => a.id === activityId);
     if (!activity) return;
     setEditingActivity(activity);
     setActivityTitle(activity.title);
@@ -123,50 +125,118 @@ export default function Index() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
-      {/* Day Title Selector */}
+      {/* Header */}
       <View style={{ paddingHorizontal: 24, paddingTop: 50, paddingBottom: 20 }}>
-        <Text style={{ fontSize: 32, fontWeight: '800', color: '#111827', marginBottom: 24, textAlign: 'center', letterSpacing: -0.5 }}>
-          {selectedDay ? selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1) : ''}
-        </Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 8 }} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
-          {weekDays.map((day) => (
+        {/* View Toggle */}
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20 }}>
+          <View style={{ 
+            flexDirection: 'row', 
+            backgroundColor: '#F1F5F9', 
+            borderRadius: 12, 
+            padding: 4 
+          }}>
             <Pressable
-              key={day}
-              onPress={() => setSelectedDay(day)}
+              onPress={() => setViewMode('day')}
               style={{
-                paddingHorizontal: 18,
-                paddingVertical: 10,
-                marginHorizontal: 3,
-                borderRadius: 12,
-                backgroundColor: selectedDay === day ? '#4F46E5' : '#F8FAFC',
-                shadowColor: selectedDay === day ? '#4F46E5' : '#000',
-                shadowOpacity: selectedDay === day ? 0.25 : 0.08,
-                shadowRadius: selectedDay === day ? 8 : 4,
-                shadowOffset: { width: 0, height: selectedDay === day ? 4 : 2 },
-                elevation: selectedDay === day ? 8 : 2,
+                paddingHorizontal: 20,
+                paddingVertical: 8,
+                borderRadius: 8,
+                backgroundColor: viewMode === 'day' ? '#4F46E5' : 'transparent',
               }}
             >
-              <Text style={{ 
-                fontWeight: selectedDay === day ? '700' : '600', 
-                color: selectedDay === day ? '#FFFFFF' : '#64748B',
-                fontSize: 14,
-                textTransform: 'capitalize'
+              <Text style={{
+                fontWeight: '600',
+                color: viewMode === 'day' ? '#FFFFFF' : '#64748B',
+                fontSize: 14
               }}>
-                {day.slice(0, 3)}
+                Day View
               </Text>
             </Pressable>
-          ))}
-        </ScrollView>
+            <Pressable
+              onPress={() => setViewMode('week')}
+              style={{
+                paddingHorizontal: 20,
+                paddingVertical: 8,
+                borderRadius: 8,
+                backgroundColor: viewMode === 'week' ? '#4F46E5' : 'transparent',
+              }}
+            >
+              <Text style={{
+                fontWeight: '600',
+                color: viewMode === 'week' ? '#FFFFFF' : '#64748B',
+                fontSize: 14
+              }}>
+                Week View
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+
+        {/* Day Title and Selector - Only show in day view */}
+        {viewMode === 'day' && (
+          <>
+            <Text style={{ fontSize: 32, fontWeight: '800', color: '#111827', marginBottom: 24, textAlign: 'center', letterSpacing: -0.5 }}>
+              {selectedDay ? selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1) : ''}
+            </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 8 }} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
+              {weekDays.map((day) => (
+                <Pressable
+                  key={day}
+                  onPress={() => setSelectedDay(day)}
+                  style={{
+                    paddingHorizontal: 18,
+                    paddingVertical: 10,
+                    marginHorizontal: 3,
+                    borderRadius: 12,
+                    backgroundColor: selectedDay === day ? '#4F46E5' : '#F8FAFC',
+                    shadowColor: selectedDay === day ? '#4F46E5' : '#000',
+                    shadowOpacity: selectedDay === day ? 0.25 : 0.08,
+                    shadowRadius: selectedDay === day ? 8 : 4,
+                    shadowOffset: { width: 0, height: selectedDay === day ? 4 : 2 },
+                    elevation: selectedDay === day ? 8 : 2,
+                  }}
+                >
+                  <Text style={{ 
+                    fontWeight: selectedDay === day ? '700' : '600', 
+                    color: selectedDay === day ? '#FFFFFF' : '#64748B',
+                    fontSize: 14,
+                    textTransform: 'capitalize'
+                  }}>
+                    {day.slice(0, 3)}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </>
+        )}
+
+        {/* Week View Title */}
+        {viewMode === 'week' && (
+          <Text style={{ fontSize: 32, fontWeight: '800', color: '#111827', marginBottom: 24, textAlign: 'center', letterSpacing: -0.5 }}>
+            Weekly Overview
+          </Text>
+        )}
       </View>
-      <ScrollView style={{ flex: 1, paddingHorizontal: 24, paddingTop: 8, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
-        <ActivityTimeline
-          day={selectedDay}
-          activities={getActivitiesForDay(selectedDay)}
-          onEditActivity={openEditSheet}
-          onDeleteActivity={deleteActivity}
-          onAddActivity={openAddSheet}
-        />
-      </ScrollView>
+      {viewMode === 'day' ? (
+        <ScrollView style={{ flex: 1, paddingHorizontal: 24, paddingTop: 8, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
+          <ActivityTimeline
+            day={selectedDay}
+            activities={getActivitiesForDay(selectedDay)}
+            onEditActivity={openEditSheet}
+            onDeleteActivity={deleteActivity}
+            onAddActivity={openAddSheet}
+          />
+        </ScrollView>
+      ) : (
+        <View style={{ flex: 1, paddingLeft: 24, paddingTop: 8, paddingBottom: 24 }}>
+          <WeeklyGrid
+            activities={activities}
+            onEditActivity={openEditSheet}
+            onDeleteActivity={deleteActivity}
+            onAddActivity={openAddSheet}
+          />
+        </View>
+      )}
       <FloatingActionButton onPress={openAddSheet} />
       <ActivitySheet
         visible={sheetVisible}
