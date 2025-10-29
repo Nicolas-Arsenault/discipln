@@ -2,7 +2,7 @@ import "@/globals.css";
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 
 interface JournalEntry {
@@ -234,8 +234,10 @@ const journaling = () => {
         transparent={true}
         onRequestClose={() => setIsModalVisible(false)}
       >
-        <View className="flex-1 shadow justify-end">
-          <View className="bg-white rounded-t-3xl p-6 max-h-[90%] min-h-[90%]">
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View className="flex-1 shadow justify-end">
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View className="bg-white rounded-t-3xl p-6 max-h-[90%] min-h-[90%]">
             <View className="flex-row justify-between items-center mb-4">
               <Text className="text-xl font-bold text-gray-900">
                 {isViewingMode ? 'Journal Entry' : 'New Entry'}
@@ -297,6 +299,8 @@ const journaling = () => {
                     placeholderTextColor="#9CA3AF"
                     className="bg-gray-50 rounded-xl p-4 text-gray-800 text-base leading-6 min-h-[200px] mb-4"
                     textAlignVertical="top"
+                    returnKeyType="done"
+                    blurOnSubmit={true}
                   />
 
                   <View className="mb-6">
@@ -340,8 +344,10 @@ const journaling = () => {
                 </>
               )}
             </ScrollView>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );

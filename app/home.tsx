@@ -104,19 +104,19 @@ export default function Home() {
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={{ paddingHorizontal: 24, paddingTop: insets.top + 20, paddingBottom: 20 }}>
+        <View style={{ paddingHorizontal: 20, paddingTop: insets.top + 8, paddingBottom: 12 }}>
           <Text style={{ 
-            fontSize: 32, 
-            fontWeight: '800', 
+            fontSize: 24, 
+            fontWeight: '700', 
             color: '#111827', 
-            marginBottom: 8, 
+            marginBottom: 6, 
             textAlign: 'center',
             letterSpacing: -0.5 
           }}>
             Daily Check-in
           </Text>
           <Text style={{ 
-            fontSize: 16, 
+            fontSize: 14, 
             color: '#64748B', 
             textAlign: 'center',
             fontWeight: '500'
@@ -127,15 +127,15 @@ export default function Home() {
 
         {/* Progress Summary */}
         {goals.length > 0 && (
-          <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>
+          <View style={{ paddingHorizontal: 20, marginBottom: 16 }}>
             <View style={{
               backgroundColor: '#FFFFFF',
-              borderRadius: 20,
-              padding: 20,
+              borderRadius: 16,
+              padding: 16,
               shadowColor: '#000',
               shadowOpacity: 0.08,
-              shadowRadius: 12,
-              shadowOffset: { width: 0, height: 4 },
+              shadowRadius: 8,
+              shadowOffset: { width: 0, height: 2 },
               borderWidth: 1,
               borderColor: '#E2E8F0'
             }}>
@@ -168,7 +168,7 @@ export default function Home() {
         )}
 
         {/* Goals List */}
-        <View style={{ paddingHorizontal: 24, paddingBottom: 100 }}>
+        <View style={{ paddingHorizontal: 20, paddingBottom: 80 }}>
           {goals.length === 0 ? (
             <View style={{
               backgroundColor: '#FFFFFF',

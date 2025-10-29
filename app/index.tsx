@@ -127,118 +127,126 @@ export default function Index() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
-      {/* Header */}
-      <View style={{ paddingHorizontal: 24, paddingTop: insets.top + 20, paddingBottom: 20 }}>
-        {/* View Toggle */}
-        <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20 }}>
-          <View style={{ 
-            flexDirection: 'row', 
-            backgroundColor: '#F1F5F9', 
-            borderRadius: 12, 
-            padding: 4 
-          }}>
-            <Pressable
-              onPress={() => setViewMode('day')}
-              style={{
-                paddingHorizontal: 20,
-                paddingVertical: 8,
-                borderRadius: 8,
-                backgroundColor: viewMode === 'day' ? '#4F46E5' : 'transparent',
-              }}
-            >
-              <Text style={{
-                fontWeight: '600',
-                color: viewMode === 'day' ? '#FFFFFF' : '#64748B',
-                fontSize: 14
-              }}>
-                Day View
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setViewMode('week')}
-              style={{
-                paddingHorizontal: 20,
-                paddingVertical: 8,
-                borderRadius: 8,
-                backgroundColor: viewMode === 'week' ? '#4F46E5' : 'transparent',
-              }}
-            >
-              <Text style={{
-                fontWeight: '600',
-                color: viewMode === 'week' ? '#FFFFFF' : '#64748B',
-                fontSize: 14
-              }}>
-                Week View
-              </Text>
-            </Pressable>
+      <ScrollView 
+        style={{ flex: 1 }} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }} // Extra padding for floating button
+      >
+        {/* Header */}
+        <View style={{ paddingHorizontal: 20, paddingTop: insets.top + 8, paddingBottom: 12 }}>
+          {/* View Toggle */}
+          <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 12 }}>
+            <View style={{ 
+              flexDirection: 'row', 
+              backgroundColor: '#F1F5F9', 
+              borderRadius: 10, 
+              padding: 3 
+            }}>
+              <Pressable
+                onPress={() => setViewMode('day')}
+                style={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 6,
+                  borderRadius: 7,
+                  backgroundColor: viewMode === 'day' ? '#4F46E5' : 'transparent',
+                }}
+              >
+                <Text style={{
+                  fontWeight: '600',
+                  color: viewMode === 'day' ? '#FFFFFF' : '#64748B',
+                  fontSize: 13
+                }}>
+                  Day View
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setViewMode('week')}
+                style={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 6,
+                  borderRadius: 7,
+                  backgroundColor: viewMode === 'week' ? '#4F46E5' : 'transparent',
+                }}
+              >
+                <Text style={{
+                  fontWeight: '600',
+                  color: viewMode === 'week' ? '#FFFFFF' : '#64748B',
+                  fontSize: 13
+                }}>
+                  Week View
+                </Text>
+              </Pressable>
+            </View>
           </View>
-        </View>
 
-        {/* Day Title and Selector - Only show in day view */}
-        {viewMode === 'day' && (
-          <>
-            <Text style={{ fontSize: 32, fontWeight: '800', color: '#111827', marginBottom: 24, textAlign: 'center', letterSpacing: -0.5 }}>
-              {selectedDay ? selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1) : ''}
+          {/* Day Title and Selector - Only show in day view */}
+          {viewMode === 'day' && (
+            <>
+              <Text style={{ fontSize: 24, fontWeight: '700', color: '#111827', marginBottom: 16, textAlign: 'center', letterSpacing: -0.5 }}>
+                {selectedDay ? selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1) : ''}
+              </Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 4 }} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
+                {weekDays.map((day) => (
+                  <Pressable
+                    key={day}
+                    onPress={() => setSelectedDay(day)}
+                    style={{
+                      paddingHorizontal: 14,
+                      paddingVertical: 8,
+                      marginHorizontal: 2,
+                      borderRadius: 10,
+                      backgroundColor: selectedDay === day ? '#4F46E5' : '#F8FAFC',
+                      shadowColor: selectedDay === day ? '#4F46E5' : '#000',
+                      shadowOpacity: selectedDay === day ? 0.25 : 0.08,
+                      shadowRadius: selectedDay === day ? 6 : 3,
+                      shadowOffset: { width: 0, height: selectedDay === day ? 3 : 1 },
+                      elevation: selectedDay === day ? 6 : 2,
+                    }}
+                  >
+                    <Text style={{ 
+                      fontWeight: selectedDay === day ? '700' : '600', 
+                      color: selectedDay === day ? '#FFFFFF' : '#64748B',
+                      fontSize: 13,
+                      textTransform: 'capitalize'
+                    }}>
+                      {day.slice(0, 3)}
+                    </Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </>
+          )}
+
+          {/* Week View Title */}
+          {viewMode === 'week' && (
+            <Text style={{ fontSize: 24, fontWeight: '700', color: '#111827', marginBottom: 16, textAlign: 'center', letterSpacing: -0.5 }}>
+              Weekly Overview
             </Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 8 }} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
-              {weekDays.map((day) => (
-                <Pressable
-                  key={day}
-                  onPress={() => setSelectedDay(day)}
-                  style={{
-                    paddingHorizontal: 18,
-                    paddingVertical: 10,
-                    marginHorizontal: 3,
-                    borderRadius: 12,
-                    backgroundColor: selectedDay === day ? '#4F46E5' : '#F8FAFC',
-                    shadowColor: selectedDay === day ? '#4F46E5' : '#000',
-                    shadowOpacity: selectedDay === day ? 0.25 : 0.08,
-                    shadowRadius: selectedDay === day ? 8 : 4,
-                    shadowOffset: { width: 0, height: selectedDay === day ? 4 : 2 },
-                    elevation: selectedDay === day ? 8 : 2,
-                  }}
-                >
-                  <Text style={{ 
-                    fontWeight: selectedDay === day ? '700' : '600', 
-                    color: selectedDay === day ? '#FFFFFF' : '#64748B',
-                    fontSize: 14,
-                    textTransform: 'capitalize'
-                  }}>
-                    {day.slice(0, 3)}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </>
-        )}
-
-        {/* Week View Title */}
-        {viewMode === 'week' && (
-          <Text style={{ fontSize: 32, fontWeight: '800', color: '#111827', marginBottom: 24, textAlign: 'center', letterSpacing: -0.5 }}>
-            Weekly Overview
-          </Text>
-        )}
-      </View>
-      {viewMode === 'day' ? (
-        <ScrollView style={{ flex: 1, paddingHorizontal: 24, paddingTop: 8, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
-          <ActivityTimeline
-            day={selectedDay}
-            activities={getActivitiesForDay(selectedDay)}
-            onEditActivity={openEditSheet}
-            onDeleteActivity={deleteActivity}
-            onAddActivity={openAddSheet}
-          />
-        </ScrollView>
-      ) : (
-        <View style={{ flex: 1, paddingLeft: 24, paddingTop: 8, paddingBottom: 24 }}>
-          <WeeklyGrid
-            activities={activities}
-            onEditActivity={openEditSheet}
-            onDeleteActivity={deleteActivity}
-            onAddActivity={openAddSheet}
-          />
+          )}
         </View>
-      )}
+
+        {/* Content Area */}
+        {viewMode === 'day' ? (
+          <View style={{ paddingHorizontal: 20, paddingTop: 4 }}>
+            <ActivityTimeline
+              day={selectedDay}
+              activities={getActivitiesForDay(selectedDay)}
+              onEditActivity={openEditSheet}
+              onDeleteActivity={deleteActivity}
+              onAddActivity={openAddSheet}
+            />
+          </View>
+        ) : (
+          <View style={{ paddingLeft: 20, paddingTop: 4 }}>
+            <WeeklyGrid
+              activities={activities}
+              onEditActivity={openEditSheet}
+              onDeleteActivity={deleteActivity}
+              onAddActivity={openAddSheet}
+            />
+          </View>
+        )}
+      </ScrollView>
       <FloatingActionButton onPress={openAddSheet} />
       <ActivitySheet
         visible={sheetVisible}

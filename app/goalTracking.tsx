@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Dimensions, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 interface Goal {
   id: number;
@@ -656,8 +656,10 @@ const goalTracking = () => {
         transparent={true}
         onRequestClose={() => setIsCreateModalVisible(false)}
       >
-        <View className="flex-1 shadow justify-end">
-          <View className="bg-white rounded-t-3xl p-6 max-h-[90%]">
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View className="flex-1 shadow justify-end">
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View className="bg-white rounded-t-3xl p-6 max-h-[90%]">
             <View className="flex-row justify-between items-center mb-6">
               <Text className="text-xl font-bold text-gray-900">Create New Goal</Text>
               <Pressable onPress={() => setIsCreateModalVisible(false)}>
@@ -673,6 +675,9 @@ const goalTracking = () => {
                   onChangeText={setNewGoalTitle}
                   placeholder="e.g., Exercise daily, Read 30 minutes"
                   className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                  returnKeyType="done"
+                  onSubmitEditing={Keyboard.dismiss}
+                  blurOnSubmit={true}
                 />
               </View>
 
@@ -686,6 +691,8 @@ const goalTracking = () => {
                   numberOfLines={3}
                   className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
                   textAlignVertical="top"
+                  returnKeyType="done"
+                  blurOnSubmit={true}
                 />
               </View>
 
@@ -697,6 +704,9 @@ const goalTracking = () => {
                   placeholder="30"
                   keyboardType="numeric"
                   className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                  returnKeyType="done"
+                  onSubmitEditing={Keyboard.dismiss}
+                  blurOnSubmit={true}
                 />
               </View>
 
@@ -730,8 +740,10 @@ const goalTracking = () => {
                 <Text className="text-white font-semibold text-base">Create Goal</Text>
               </Pressable>
             </ScrollView>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
 
       {/* Progress Chart Modal */}
@@ -741,8 +753,10 @@ const goalTracking = () => {
         transparent={true}
         onRequestClose={() => setIsProgressModalVisible(false)}
       >
-        <View className="flex-1 bg-black/50 justify-center px-4">
-          <View className="bg-white rounded-3xl p-6 max-h-[80%]">
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View className="flex-1 bg-black/50 justify-center px-4">
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View className="bg-white rounded-3xl p-6 max-h-[80%]">
             <View className="flex-row justify-between items-center mb-6">
               <Text className="text-xl font-bold text-gray-900">
                 {selectedGoal?.title}
@@ -780,8 +794,10 @@ const goalTracking = () => {
                 </View>
               </ScrollView>
             )}
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );

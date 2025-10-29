@@ -14,10 +14,10 @@ export default function FloatingActionButton({
 }: FloatingActionButtonProps) {
   return (
     <Pressable 
-      className={`absolute bottom-10 right-8 rounded-full bg-gray-900 w-20 h-20 flex items-center justify-center shadow-lg ${className}`}
+      className={`absolute bottom-10 right-8 rounded-full bg-gray-900 w-14 h-14 flex items-center justify-center shadow-lg ${className}`}
       onPress={onPress}
     >
-      <Text className="text-4xl font-bold text-white">{icon}</Text>  
+      <Text className="text-2xl font-bold text-white">{icon}</Text>  
     </Pressable>
   );
 }

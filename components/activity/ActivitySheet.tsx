@@ -1,6 +1,5 @@
-import { Picker } from '@react-native-picker/picker';
-import React, { useEffect, useRef } from 'react';
-import { Alert, Animated, Dimensions, Easing, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Animated, Dimensions, Easing, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { Goal, WeekDay } from '../../types';
 
 const { height: screenHeight } = Dimensions.get('window');
@@ -59,6 +58,10 @@ export default function ActivitySheet({
   onCreateGoal,
 }: ActivitySheetProps) {
   const slideAnim = useRef(new Animated.Value(400)).current; // Start off-screen
+  const [showStartHourPicker, setShowStartHourPicker] = useState(false);
+  const [showStartMinutePicker, setShowStartMinutePicker] = useState(false);
+  const [showEndHourPicker, setShowEndHourPicker] = useState(false);
+  const [showEndMinutePicker, setShowEndMinutePicker] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -96,6 +99,15 @@ export default function ActivitySheet({
            goals.length > 0;
   };
 
+  // Close all pickers and dismiss keyboard
+  const handleBackgroundPress = () => {
+    setShowStartHourPicker(false);
+    setShowStartMinutePicker(false);
+    setShowEndHourPicker(false);
+    setShowEndMinutePicker(false);
+    Keyboard.dismiss();
+  };
+
   return (
     <Modal
       visible={visible}
@@ -103,8 +115,10 @@ export default function ActivitySheet({
       transparent={true}
       onRequestClose={onCancel}
     >
-      <View className="flex-1 shadow justify-end">
-        <View className="bg-white rounded-t-3xl p-6 max-h-[90%] min-h-[90%]">
+      <TouchableWithoutFeedback onPress={handleBackgroundPress}>
+        <View className="flex-1 shadow justify-end">
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View className="bg-white rounded-t-3xl p-6 max-h-[90%] min-h-[90%]">
           <View className="flex-row justify-between items-center mb-6">
             <Text className="text-xl font-bold text-gray-900">{mode === 'edit' ? 'Edit Activity' : 'Add Activity'}</Text>
             <Pressable onPress={onCancel}>
@@ -124,6 +138,9 @@ export default function ActivitySheet({
                 className={`border rounded-xl px-4 py-3 text-gray-900 ${
                   !activityTitle.trim() ? 'border-red-200' : 'border-gray-200'
                 }`}
+                returnKeyType="done"
+                onSubmitEditing={Keyboard.dismiss}
+                blurOnSubmit={true}
               />
               {!activityTitle.trim() && (
                 <Text className="text-red-500 text-sm mt-1">Activity title is required</Text>
@@ -210,47 +227,142 @@ export default function ActivitySheet({
               <View className="flex-1 mr-2">
                 <Text className="text-base font-semibold mb-2 text-gray-900">Start Time</Text>
                 <View className="flex-row items-center">
-                  <Picker
-                    selectedValue={startHour}
-                    onValueChange={onChangeStartHour}
-                    style={{ flex: 1, height: 36, backgroundColor: 'transparent', borderWidth: 0 }}
-                  >
-                    {hours.map((h) => (
-                      <Picker.Item key={h} label={h.toString().padStart(2, '0')} value={h} />
-                    ))}
-                  </Picker>
-                  <Picker
-                    selectedValue={startMinute}
-                    onValueChange={onChangeStartMinute}
-                    style={{ flex: 1, height: 36, backgroundColor: 'transparent', borderWidth: 0 }}
-                  >
-                    {minutes.map((m) => (
-                      <Picker.Item key={m} label={m.toString().padStart(2, '0')} value={m} />
-                    ))}
-                  </Picker>
+                  {/* Start Hour Picker */}
+                  <View className="flex-1 mr-1">
+                    <Pressable
+                      className="border border-gray-300 rounded-lg px-3 py-2 bg-white"
+                      onPress={() => setShowStartHourPicker(!showStartHourPicker)}
+                    >
+                      <Text className="text-gray-900 text-center font-medium">
+                        {startHour.toString().padStart(2, '0')}
+                      </Text>
+                    </Pressable>
+                    {showStartHourPicker && (
+                      <View className="absolute top-10 left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-40">
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                          {hours.map((h) => (
+                            <Pressable
+                              key={h}
+                              className={`px-3 py-2 ${startHour === h ? 'bg-gray-100' : ''}`}
+                              onPress={() => {
+                                onChangeStartHour(h);
+                                setShowStartHourPicker(false);
+                              }}
+                            >
+                              <Text className={`text-center ${startHour === h ? 'font-bold text-gray-900' : 'text-gray-700'}`}>
+                                {h.toString().padStart(2, '0')}
+                              </Text>
+                            </Pressable>
+                          ))}
+                        </ScrollView>
+                      </View>
+                    )}
+                  </View>
+                  
+                  <Text className="text-gray-500 mx-1">:</Text>
+                  
+                  {/* Start Minute Picker */}
+                  <View className="flex-1 ml-1">
+                    <Pressable
+                      className="border border-gray-300 rounded-lg px-3 py-2 bg-white"
+                      onPress={() => setShowStartMinutePicker(!showStartMinutePicker)}
+                    >
+                      <Text className="text-gray-900 text-center font-medium">
+                        {startMinute.toString().padStart(2, '0')}
+                      </Text>
+                    </Pressable>
+                    {showStartMinutePicker && (
+                      <View className="absolute top-10 left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                          {minutes.map((m) => (
+                            <Pressable
+                              key={m}
+                              className={`px-3 py-2 ${startMinute === m ? 'bg-gray-100' : ''}`}
+                              onPress={() => {
+                                onChangeStartMinute(m);
+                                setShowStartMinutePicker(false);
+                              }}
+                            >
+                              <Text className={`text-center ${startMinute === m ? 'font-bold text-gray-900' : 'text-gray-700'}`}>
+                                {m.toString().padStart(2, '0')}
+                              </Text>
+                            </Pressable>
+                          ))}
+                        </ScrollView>
+                      </View>
+                    )}
+                  </View>
                 </View>
               </View>
+              
               <View className="flex-1 ml-2">
                 <Text className="text-base font-semibold mb-2 text-gray-900">End Time</Text>
                 <View className="flex-row">
-                  <Picker
-                    selectedValue={endHour}
-                    onValueChange={onChangeEndHour}
-                    style={{ flex: 1, height: 36 }}
-                  >
-                    {hours.map((h) => (
-                      <Picker.Item key={h} label={h.toString().padStart(2, '0')} value={h} />
-                    ))}
-                  </Picker>
-                  <Picker
-                    selectedValue={endMinute}
-                    onValueChange={onChangeEndMinute}
-                    style={{ flex: 1, height: 36 }}
-                  >
-                    {minutes.map((m) => (
-                      <Picker.Item key={m} label={m.toString().padStart(2, '0')} value={m} />
-                    ))}
-                  </Picker>
+                  {/* End Hour Picker */}
+                  <View className="flex-1 mr-1">
+                    <Pressable
+                      className="border border-gray-300 rounded-lg px-3 py-2 bg-white"
+                      onPress={() => setShowEndHourPicker(!showEndHourPicker)}
+                    >
+                      <Text className="text-gray-900 text-center font-medium">
+                        {endHour.toString().padStart(2, '0')}
+                      </Text>
+                    </Pressable>
+                    {showEndHourPicker && (
+                      <View className="absolute top-10 left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-40">
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                          {hours.map((h) => (
+                            <Pressable
+                              key={h}
+                              className={`px-3 py-2 ${endHour === h ? 'bg-gray-100' : ''}`}
+                              onPress={() => {
+                                onChangeEndHour(h);
+                                setShowEndHourPicker(false);
+                              }}
+                            >
+                              <Text className={`text-center ${endHour === h ? 'font-bold text-gray-900' : 'text-gray-700'}`}>
+                                {h.toString().padStart(2, '0')}
+                              </Text>
+                            </Pressable>
+                          ))}
+                        </ScrollView>
+                      </View>
+                    )}
+                  </View>
+                  
+                  <Text className="text-gray-500 mx-1">:</Text>
+                  
+                  {/* End Minute Picker */}
+                  <View className="flex-1 ml-1">
+                    <Pressable
+                      className="border border-gray-300 rounded-lg px-3 py-2 bg-white"
+                      onPress={() => setShowEndMinutePicker(!showEndMinutePicker)}
+                    >
+                      <Text className="text-gray-900 text-center font-medium">
+                        {endMinute.toString().padStart(2, '0')}
+                      </Text>
+                    </Pressable>
+                    {showEndMinutePicker && (
+                      <View className="absolute top-10 left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                          {minutes.map((m) => (
+                            <Pressable
+                              key={m}
+                              className={`px-3 py-2 ${endMinute === m ? 'bg-gray-100' : ''}`}
+                              onPress={() => {
+                                onChangeEndMinute(m);
+                                setShowEndMinutePicker(false);
+                              }}
+                            >
+                              <Text className={`text-center ${endMinute === m ? 'font-bold text-gray-900' : 'text-gray-700'}`}>
+                                {m.toString().padStart(2, '0')}
+                              </Text>
+                            </Pressable>
+                          ))}
+                        </ScrollView>
+                      </View>
+                    )}
+                  </View>
                 </View>
               </View>
             </View>
@@ -280,8 +392,10 @@ export default function ActivitySheet({
               </Text>
             </Pressable>
           </View>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }
