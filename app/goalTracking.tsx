@@ -223,45 +223,225 @@ const goalTracking = () => {
     });
   };
 
-  const OverallProgressChart = () => {
-    const weeklyData = getOverallWeeklyData();
-    const maxHeight = 80;
+  const ActivityGrid = ({ goalProgress: progressData, goals: goalsData }: { 
+    goalProgress: GoalProgress[], 
+    goals: Goal[] 
+  }) => {
+    interface YearData {
+      date: string;
+      dateObj: Date;
+      completedCount: number;
+      totalGoals: number;
+      intensity: number;
+      dayOfWeek: number;
+      monthName: string;
+    }
+
+    interface WeekData {
+      weekIndex: number;
+      month: string;
+    }
+
+    // Generate fresh 6-month data each render to reflect current goalProgress state
+    const generateFreshYearData = (): YearData[] => {
+      const days: YearData[] = [];
+      const today = new Date();
+      
+      // Show last 6 months (approximately 180 days)
+      for (let i = 179; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateString = date.toISOString().split('T')[0];
+        
+        // Count completed goals for this date
+        const dayProgress = progressData.filter(p => p.date === dateString && p.completed);
+        const completedCount = dayProgress.length;
+        const totalGoals = goalsData.length;
+        
+        // Calculate intensity level (0-4) based on completion percentage
+        let intensity = 0;
+        if (completedCount > 0 && totalGoals > 0) {
+          const percentage = (completedCount / totalGoals) * 100;
+          if (percentage >= 100) intensity = 4;
+          else if (percentage >= 75) intensity = 3;
+          else if (percentage >= 50) intensity = 2;
+          else intensity = 1;
+        }
+        
+        days.push({
+          date: dateString,
+          dateObj: date,
+          completedCount,
+          totalGoals,
+          intensity,
+          dayOfWeek: date.getDay(),
+          monthName: date.toLocaleDateString('en', { month: 'short' })
+        });
+      }
+      
+      return days;
+    };
+
+    const yearData = generateFreshYearData();
+    const squareSize = 10;
+    const spacing = 1.5;
     
+    // Group days into weeks (columns) for maximum width usage
+    const weeks: (YearData | null)[][] = [];
+    let currentWeek: (YearData | null)[] = [];
+    
+    yearData.forEach((day, index) => {
+      if (index === 0) {
+        // Fill empty slots at the beginning if year doesn't start on Sunday
+        for (let i = 0; i < day.dayOfWeek; i++) {
+          currentWeek.push(null);
+        }
+      }
+      
+      currentWeek.push(day);
+      
+      if (currentWeek.length === 7) {
+        weeks.push([...currentWeek]);
+        currentWeek = [];
+      }
+    });
+    
+    // Add remaining days to last week
+    if (currentWeek.length > 0) {
+      while (currentWeek.length < 7) {
+        currentWeek.push(null);
+      }
+      weeks.push(currentWeek);
+    }
+
+    const getIntensityColor = (intensity: number) => {
+      switch (intensity) {
+        case 0: return '#ebedf0'; // No activity
+        case 1: return '#9be9a8'; // Low activity
+        case 2: return '#40c463'; // Medium activity  
+        case 3: return '#30a14e'; // High activity
+        case 4: return '#216e39'; // Very high activity
+        default: return '#ebedf0';
+      }
+    };
+
+    // Get month labels for the grid
+    const getMonthLabels = (): WeekData[] => {
+      const labels: WeekData[] = [];
+      let lastMonth = '';
+      
+      weeks.forEach((week, weekIndex) => {
+        const firstValidDay = week.find(day => day !== null);
+        if (firstValidDay && firstValidDay.monthName !== lastMonth) {
+          if (weekIndex > 0 || weekIndex === 0) { // Show label for all months
+            labels.push({
+              weekIndex,
+              month: firstValidDay.monthName
+            });
+          }
+          lastMonth = firstValidDay.monthName;
+        }
+      });
+      
+      return labels;
+    };
+
+    const monthLabels = getMonthLabels();
+    const totalContributions = yearData.reduce((sum, day) => sum + day.completedCount, 0);
+
     return (
       <View>
-        <View className="flex-row justify-between items-end h-24 mb-4">
-          {weeklyData.map((day, index) => (
-            <View key={day.date} className="items-center flex-1">
-              <View className="flex-1 justify-end mb-2">
-                <View 
-                  className="w-8 rounded-t-lg bg-gradient-to-t from-blue-500 to-green-500"
-                  style={{ 
-                    height: Math.max((day.percentage / 100) * maxHeight, 8),
-                    backgroundColor: day.percentage > 75 ? '#22c55e' : day.percentage > 50 ? '#3b82f6' : day.percentage > 25 ? '#f59e0b' : '#e5e7eb'
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View>
+            {/* Month labels */}
+            <View className="flex-row mb-2" style={{ height: 16 }}>
+              {monthLabels.map((label, index) => (
+                <Text
+                  key={index}
+                  className="text-xs text-gray-500 absolute"
+                  style={{
+                    left: label.weekIndex * (squareSize + spacing) + 25,
+                    top: 0
                   }}
-                />
-              </View>
-              <Text className="text-xs text-gray-500 font-medium">{day.dayName}</Text>
-              <Text className="text-xs text-gray-400">{day.completedGoals}/{day.totalGoals}</Text>
+                >
+                  {label.month}
+                </Text>
+              ))}
             </View>
-          ))}
-        </View>
-        <View className="flex-row justify-between items-center">
-          <View className="flex-row items-center">
-            <View className="w-3 h-3 rounded-full bg-green-500 mr-2" />
-            <Text className="text-xs text-gray-500">75%+ Complete</Text>
+            
+            {/* Day labels and Activity grid */}
+            <View className="flex-row">
+              {/* Day labels */}
+              <View className="mr-2">
+                {['', 'Mon', '', 'Wed', '', 'Fri', ''].map((day, index) => (
+                  <View
+                    key={index}
+                    style={{ height: squareSize + spacing }}
+                    className="justify-center"
+                  >
+                    <Text className="text-xs text-gray-500">{day}</Text>
+                  </View>
+                ))}
+              </View>
+              
+              {/* Activity grid */}
+              <View className="flex-row">
+                {weeks.map((week, weekIndex) => (
+                  <View key={weekIndex} className="mr-0.5">
+                    {week.map((day, dayIndex) => (
+                      <View
+                        key={dayIndex}
+                        className="mb-0.5 rounded-sm"
+                        style={{
+                          width: squareSize,
+                          height: squareSize,
+                          backgroundColor: day ? getIntensityColor(day.intensity) : 'transparent'
+                        }}
+                      />
+                    ))}
+                  </View>
+                ))}
+              </View>
+            </View>
+            
+            {/* Legend */}
+            <View className="flex-row items-center justify-between mt-4">
+              <Text className="text-xs text-gray-500">Less</Text>
+              <View className="flex-row items-center">
+                {[0, 1, 2, 3, 4].map((intensity) => (
+                  <View
+                    key={intensity}
+                    className="rounded-sm mr-1"
+                    style={{
+                      width: 10,
+                      height: 10,
+                      backgroundColor: getIntensityColor(intensity)
+                    }}
+                  />
+                ))}
+              </View>
+              <Text className="text-xs text-gray-500">More</Text>
+            </View>
           </View>
-          <View className="flex-row items-center">
-            <View className="w-3 h-3 rounded-full bg-blue-500 mr-2" />
-            <Text className="text-xs text-gray-500">50-75%</Text>
+        </ScrollView>
+        
+        {/* Stats row */}
+        <View className="flex-row justify-between items-center mt-4 pt-4 border-t border-gray-100">
+          <View className="items-center">
+            <Text className="text-sm font-bold text-gray-900">{totalContributions}</Text>
+            <Text className="text-xs text-gray-500">contributions</Text>
           </View>
-          <View className="flex-row items-center">
-            <View className="w-3 h-3 rounded-full bg-amber-500 mr-2" />
-            <Text className="text-xs text-gray-500">25-50%</Text>
+          <View className="items-center">
+            <Text className="text-sm font-bold text-green-600">
+              {yearData.filter(day => day.intensity > 0).length}
+            </Text>
+            <Text className="text-xs text-gray-500">active days</Text>
           </View>
-          <View className="flex-row items-center">
-            <View className="w-3 h-3 rounded-full bg-gray-300 mr-2" />
-            <Text className="text-xs text-gray-500">0-25%</Text>
+          <View className="items-center">
+            <Text className="text-sm font-bold text-blue-600">
+              {Math.round((yearData.filter(day => day.intensity > 0).length / 180) * 100)}%
+            </Text>
+            <Text className="text-xs text-gray-500">consistency</Text>
           </View>
         </View>
       </View>
@@ -370,15 +550,19 @@ const goalTracking = () => {
           </View>
         </View>
 
-        {/* Overall Progress Graph Widget */}
+        {/* Activity Grid Widget */}
         {goals.length > 0 && (
           <View className="px-4 mb-6">
             <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
               <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-lg font-bold text-gray-900">Weekly Overview</Text>
-                <Ionicons name="trending-up" size={20} color="#22c55e" />
+                <Text className="text-lg font-bold text-gray-900">Yearly Activity</Text>
+                <Ionicons name="grid-outline" size={20} color="#22c55e" />
               </View>
-              <OverallProgressChart />
+              <ActivityGrid 
+                goalProgress={goalProgress} 
+                goals={goals} 
+                key={`${goalProgress.length}-${goalProgress.filter(p => p.completed).length}`}
+              />
             </View>
           </View>
         )}
