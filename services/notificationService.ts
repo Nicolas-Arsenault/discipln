@@ -42,7 +42,6 @@ class NotificationService {
       }
       
       if (finalStatus !== 'granted') {
-        console.log('Failed to get push token for push notification!');
         return false;
       }
       
@@ -57,7 +56,6 @@ class NotificationService {
       
       return true;
     } catch (error) {
-      console.error('Error requesting notification permissions:', error);
       return false;
     }
   }
@@ -66,7 +64,6 @@ class NotificationService {
     try {
       const hasPermission = await this.requestPermissions();
       if (!hasPermission) {
-        console.log('Notification permissions not granted');
         return null;
       }
 
@@ -109,17 +106,12 @@ class NotificationService {
         },
       });
 
-      console.log(`Notifications scheduled for task "${task.title}"`);
-      console.log(`- Advance reminder at ${reminderTime.getHours().toString().padStart(2, '0')}:${reminderTime.getMinutes().toString().padStart(2, '0')}:${reminderTime.getSeconds().toString().padStart(2, '0')}`);
-      console.log(`- Main reminder at ${task.hours.toString().padStart(2, '0')}:${task.minutes.toString().padStart(2, '0')}:${task.seconds.toString().padStart(2, '0')}`);
-      
       // Return both notification IDs as a JSON string
       return JSON.stringify({
         advance: advanceNotificationId,
         main: mainNotificationId
       });
     } catch (error) {
-      console.error('Error scheduling notification:', error);
       return null;
     }
   }
@@ -133,29 +125,25 @@ class NotificationService {
         // Cancel both advance and main notifications
         if (notificationIds.advance) {
           await Notifications.cancelScheduledNotificationAsync(notificationIds.advance);
-          console.log(`Advance notification ${notificationIds.advance} cancelled`);
         }
         
         if (notificationIds.main) {
           await Notifications.cancelScheduledNotificationAsync(notificationIds.main);
-          console.log(`Main notification ${notificationIds.main} cancelled`);
         }
       } else {
         // Handle legacy single notification ID
         await Notifications.cancelScheduledNotificationAsync(notificationId);
-        console.log(`Notification ${notificationId} cancelled`);
       }
     } catch (error) {
-      console.error('Error cancelling notification:', error);
+      // Error cancelling notification
     }
   }
 
   async cancelAllNotifications(): Promise<void> {
     try {
       await Notifications.cancelAllScheduledNotificationsAsync();
-      console.log('All notifications cancelled');
     } catch (error) {
-      console.error('Error cancelling all notifications:', error);
+      // Error cancelling all notifications
     }
   }
 
@@ -171,18 +159,9 @@ class NotificationService {
       const [year, month, day] = event.date.split('-').map(Number);
       const eventDate = new Date(year, month - 1, day, event.hours, event.minutes, event.seconds);
 
-      // Debug logging
-      console.log('Event scheduling debug:');
-      console.log(`- Input date: ${event.date}`);
-      console.log(`- Input time: ${event.hours}:${event.minutes}:${event.seconds}`);
-      console.log(`- Created eventDate: ${eventDate.toLocaleString()}`);
-      console.log(`- Current time: ${new Date().toLocaleString()}`);
-
       // Check if the event is in the future
       const now = new Date();
       if (eventDate <= now) {
-        console.log('Event is in the past, not scheduling notification');
-        console.log(`Event: ${eventDate.toLocaleString()}, Now: ${now.toLocaleString()}`);
         return null;
       }
 
@@ -221,19 +200,12 @@ class NotificationService {
         },
       });
 
-      console.log(`Event notifications scheduled for "${event.title}" on ${event.date}`);
-      if (advanceNotificationId) {
-        console.log(`- Advance reminder at ${reminderDate.toLocaleString()}`);
-      }
-      console.log(`- Main reminder at ${eventDate.toLocaleString()}`);
-      
       // Return both notification IDs as a JSON string
       return JSON.stringify({
         advance: advanceNotificationId,
         main: mainNotificationId
       });
     } catch (error) {
-      console.error('Error scheduling event notification:', error);
       return null;
     }
   }
@@ -241,10 +213,8 @@ class NotificationService {
   async getScheduledNotifications() {
     try {
       const notifications = await Notifications.getAllScheduledNotificationsAsync();
-      console.log('Scheduled notifications:', notifications);
       return notifications;
     } catch (error) {
-      console.error('Error getting scheduled notifications:', error);
       return [];
     }
   }

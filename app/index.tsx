@@ -1,6 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ActivitySheet from '../components/activity/ActivitySheet';
 import ActivityTimeline from '../components/activity/ActivityTimeline';
 import WeeklyGrid from '../components/activity/WeeklyGrid';
@@ -15,6 +16,7 @@ const hours = Array.from({ length: 24 }, (_, i) => i);
 const minutes = [0, 15, 30, 45];
 
 export default function Index() {
+  const insets = useSafeAreaInsets();
   const [selectedDay, setSelectedDay] = useState<WeekDay>('monday');
   const [viewMode, setViewMode] = useState<'day' | 'week'>('day');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -126,7 +128,7 @@ export default function Index() {
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       {/* Header */}
-      <View style={{ paddingHorizontal: 24, paddingTop: 50, paddingBottom: 20 }}>
+      <View style={{ paddingHorizontal: 24, paddingTop: insets.top + 20, paddingBottom: 20 }}>
         {/* View Toggle */}
         <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 20 }}>
           <View style={{ 

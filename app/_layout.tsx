@@ -1,10 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
   return (
-    <Tabs
+    <SafeAreaProvider>
+      <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#1f2937',
         tabBarInactiveTintColor: '#9ca3af',
@@ -51,10 +53,24 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
+        name="home"
+        options={{
+          title: 'Home',
+          headerTitle: 'Discipln',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons 
+              name={focused ? "home" : "home-outline"} 
+              size={focused ? 28 : 24} 
+              color={focused ? '#1f2937' : color} 
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
-          title: 'Weekly Routine',
-          headerTitle: 'Routine Maker',
+          title: 'Routine',
+          headerTitle: 'Discipln',
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons 
               name={focused ? "calendar" : "calendar-outline"} 
@@ -94,5 +110,6 @@ export default function TabLayout() {
       />
 
     </Tabs>
+    </SafeAreaProvider>
   );
 }

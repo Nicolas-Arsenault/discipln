@@ -19,7 +19,7 @@ export const useGoals = () => {
         setGoalProgress(JSON.parse(savedProgress));
       }
     } catch (error) {
-      console.error('Error loading goals:', error);
+      // Error loading goals
     }
   }, []);
 

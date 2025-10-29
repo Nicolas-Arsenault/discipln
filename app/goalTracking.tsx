@@ -1,7 +1,8 @@
 import "@/globals.css";
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Dimensions, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 interface Goal {
@@ -39,6 +40,13 @@ const goalTracking = () => {
     loadGoalsAndProgress();
   }, []);
 
+  // Refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadGoalsAndProgress();
+    }, [])
+  );
+
   const loadGoalsAndProgress = async () => {
     try {
       const savedGoals = await AsyncStorage.getItem('goals');
@@ -51,7 +59,7 @@ const goalTracking = () => {
         setGoalProgress(JSON.parse(savedProgress));
       }
     } catch (error) {
-      console.error('Error loading goals:', error);
+      // Error loading goals
     }
   };
 
@@ -59,7 +67,7 @@ const goalTracking = () => {
     try {
       await AsyncStorage.setItem('goals', JSON.stringify(updatedGoals));
     } catch (error) {
-      console.error('Error saving goals:', error);
+      // Error saving goals
     }
   };
 
@@ -67,7 +75,7 @@ const goalTracking = () => {
     try {
       await AsyncStorage.setItem('goalProgress', JSON.stringify(updatedProgress));
     } catch (error) {
-      console.error('Error saving progress:', error);
+      // Error saving progress
     }
   };
 
@@ -125,31 +133,7 @@ const goalTracking = () => {
     );
   };
 
-  const toggleTodayProgress = async (goalId: number) => {
-    const today = new Date().toISOString().split('T')[0];
-    const existingProgress = goalProgress.find(p => p.goalId === goalId && p.date === today);
-    
-    let updatedProgress;
-    if (existingProgress) {
-      // Toggle existing progress
-      updatedProgress = goalProgress.map(p => 
-        p.goalId === goalId && p.date === today 
-          ? { ...p, completed: !p.completed }
-          : p
-      );
-    } else {
-      // Create new progress entry
-      const newProgress: GoalProgress = {
-        goalId,
-        date: today,
-        completed: true,
-      };
-      updatedProgress = [...goalProgress, newProgress];
-    }
 
-    setGoalProgress(updatedProgress);
-    await saveProgress(updatedProgress);
-  };
 
   const getGoalStats = (goalId: number) => {
     const goalProgressEntries = goalProgress.filter(p => p.goalId === goalId);
@@ -499,11 +483,7 @@ const goalTracking = () => {
     );
   };
 
-  const getTodayProgress = (goalId: number) => {
-    const today = new Date().toISOString().split('T')[0];
-    const todayProgress = goalProgress.find(p => p.goalId === goalId && p.date === today);
-    return todayProgress?.completed || false;
-  };
+
 
   const getCategoryIcon = (category: Goal['category']) => {
     switch (category) {
@@ -569,17 +549,6 @@ const goalTracking = () => {
 
         {/* Goals List */}
         <View className="px-4">
-          {goals.length > 0 && (
-            <View className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
-              <View className="flex-row items-center">
-                <Ionicons name="information-circle" size={20} color="#2563eb" />
-                <Text className="text-blue-700 text-sm font-medium ml-2 flex-1">
-                  Tap the checkmark button on each goal to mark today's progress as complete!
-                </Text>
-              </View>
-            </View>
-          )}
-          
           {goals.length === 0 ? (
             <View className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 items-center">
               <View className="bg-gray-100 rounded-full p-4 mb-4">
@@ -599,7 +568,6 @@ const goalTracking = () => {
           ) : (
             goals.map((goal) => {
               const stats = getGoalStats(goal.id);
-              const isTodayCompleted = getTodayProgress(goal.id);
               
               return (
                 <View key={goal.id} className="bg-white rounded-2xl p-6 mb-4 shadow-sm border border-gray-100">
@@ -622,20 +590,6 @@ const goalTracking = () => {
                           onPress={() => deleteGoal(goal.id)}
                         >
                           <Ionicons name="trash-outline" size={20} color="#ef4444" />
-                        </Pressable>
-                        <Pressable
-                          className={`w-10 h-10 rounded-full items-center justify-center border-2 ${
-                            isTodayCompleted 
-                              ? 'bg-green-500 border-green-500' 
-                              : 'bg-white border-gray-300'
-                          }`}
-                          onPress={() => toggleTodayProgress(goal.id)}
-                        >
-                          <Ionicons 
-                            name="checkmark" 
-                            size={18} 
-                            color={isTodayCompleted ? "#ffffff" : "#9ca3af"} 
-                          />
                         </Pressable>
                       </View>
                       {goal.description ? (
