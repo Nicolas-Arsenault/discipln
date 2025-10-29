@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import ActivitySheet from '../components/activity/ActivitySheet';
 import ActivityTimeline from '../components/activity/ActivityTimeline';
 import FloatingActionButton from '../components/ui/FloatingActionButton';
 import { useActivities } from '../hooks/useActivities';
+import { useGoals } from '../hooks/useGoals';
 import { RoutineActivity, WeekDay } from '../types';
+import { router } from 'expo-router';
 
 const weekDays: WeekDay[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -19,15 +22,27 @@ export default function Index() {
   const [startMinute, setStartMinute] = useState(0);
   const [endHour, setEndHour] = useState(10);
   const [endMinute, setEndMinute] = useState(0);
+  const [selectedGoalId, setSelectedGoalId] = useState<number | undefined>(undefined);
   const [editingActivity, setEditingActivity] = useState<RoutineActivity | null>(null);
   const [sheetVisible, setSheetVisible] = useState(false);
   const { addActivity, updateActivity, deleteActivity, getActivitiesForDay, loadActivities } = useActivities();
+  const { goals, loadGoalsAndProgress } = useGoals();
 
   useEffect(() => {
     loadActivities();
+    loadGoalsAndProgress();
   }, []);
 
-  const openAddSheet = () => {
+  // Refresh goals when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadGoalsAndProgress();
+    }, [loadGoalsAndProgress])
+  );
+
+  const openAddSheet = async () => {
+    // Refresh goals when opening the sheet
+    await loadGoalsAndProgress();
     setEditingActivity(null);
     setActivityTitle('');
     setStartHour(9);
@@ -35,6 +50,7 @@ export default function Index() {
     setEndHour(10);
     setEndMinute(0);
     setActivityDay(selectedDay);
+    setSelectedGoalId(undefined);
     setSheetVisible(true);
   };
 
@@ -48,6 +64,7 @@ export default function Index() {
     setEndHour(activity.endHour);
     setEndMinute(activity.endMinute);
     setActivityDay(activity.day);
+    setSelectedGoalId(activity.goalId);
     setSheetVisible(true);
   };
 
@@ -57,7 +74,11 @@ export default function Index() {
   };
 
   const handleSaveActivity = async () => {
-    if (!activityTitle.trim()) return;
+    if (!activityTitle.trim() || !selectedGoalId) {
+      Alert.alert('Missing Information', 'Please fill in all required fields.');
+      return;
+    }
+    
     if (editingActivity) {
       await updateActivity({
         ...(editingActivity ?? {}),
@@ -67,6 +88,7 @@ export default function Index() {
         startMinute,
         endHour,
         endMinute,
+        goalId: selectedGoalId,
       });
     } else {
       await addActivity({
@@ -76,9 +98,27 @@ export default function Index() {
         startMinute,
         endHour,
         endMinute,
+        goalId: selectedGoalId,
       });
     }
     closeSheet();
+  };
+
+  const handleCreateGoal = () => {
+    Alert.alert(
+      'Create Goal',
+      'You need to create a goal first to link activities to it. Would you like to go to the Goals section?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Go to Goals', 
+          onPress: () => {
+            closeSheet();
+            router.push('/goalTracking');
+          }
+        }
+      ]
+    );
   };
 
   return (
@@ -128,6 +168,8 @@ export default function Index() {
         startMinute={startMinute}
         endHour={endHour}
         endMinute={endMinute}
+        selectedGoalId={selectedGoalId}
+        goals={goals}
         weekDays={weekDays}
         hours={hours}
         minutes={minutes}
@@ -137,9 +179,11 @@ export default function Index() {
         onChangeStartMinute={setStartMinute}
         onChangeEndHour={setEndHour}
         onChangeEndMinute={setEndMinute}
+        onChangeGoal={setSelectedGoalId}
         onSave={handleSaveActivity}
         onCancel={closeSheet}
         onDelete={editingActivity ? () => { deleteActivity(editingActivity.id); closeSheet(); } : undefined}
+        onCreateGoal={handleCreateGoal}
       />
     </View>
   );

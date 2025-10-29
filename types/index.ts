@@ -7,6 +7,7 @@ export interface RoutineActivity {
   endHour: number;
   endMinute: number;
   notificationId?: string;
+  goalId?: number;
 }
 
 export interface Goal {
