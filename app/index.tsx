@@ -124,8 +124,8 @@ export default function Index() {
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       {/* Day Title Selector */}
-      <View style={{ paddingHorizontal: 24, paddingTop: 40, paddingBottom: 16 }}>
-        <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#1F2937', marginBottom: 16, textAlign: 'center' }}>
+      <View style={{ paddingHorizontal: 24, paddingTop: 50, paddingBottom: 20 }}>
+        <Text style={{ fontSize: 32, fontWeight: '800', color: '#111827', marginBottom: 24, textAlign: 'center', letterSpacing: -0.5 }}>
           {selectedDay ? selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1) : ''}
         </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 8 }} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -134,17 +134,26 @@ export default function Index() {
               key={day}
               onPress={() => setSelectedDay(day)}
               style={{
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                marginHorizontal: 4,
-                borderRadius: 999,
-                borderWidth: 1,
-                borderColor: selectedDay === day ? '#1F2937' : '#D1D5DB',
-                backgroundColor: selectedDay === day ? '#1F2937' : '#E5E7EB',
-                transitionDuration: '150ms',
+                paddingHorizontal: 18,
+                paddingVertical: 10,
+                marginHorizontal: 3,
+                borderRadius: 12,
+                backgroundColor: selectedDay === day ? '#4F46E5' : '#F8FAFC',
+                shadowColor: selectedDay === day ? '#4F46E5' : '#000',
+                shadowOpacity: selectedDay === day ? 0.25 : 0.08,
+                shadowRadius: selectedDay === day ? 8 : 4,
+                shadowOffset: { width: 0, height: selectedDay === day ? 4 : 2 },
+                elevation: selectedDay === day ? 8 : 2,
               }}
             >
-              <Text style={{ fontWeight: '600', color: selectedDay === day ? '#FFF' : '#374151' }}>{day.charAt(0).toUpperCase() + day.slice(1)}</Text>
+              <Text style={{ 
+                fontWeight: selectedDay === day ? '700' : '600', 
+                color: selectedDay === day ? '#FFFFFF' : '#64748B',
+                fontSize: 14,
+                textTransform: 'capitalize'
+              }}>
+                {day.slice(0, 3)}
+              </Text>
             </Pressable>
           ))}
         </ScrollView>
