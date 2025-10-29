@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Script to help update app icons and splash screen
+# Usage: ./scripts/update-icons.sh
+
+echo "🎨 Motiv App - Icon Update Helper"
+echo "================================="
+echo ""
+echo "To update your app icons and splash screen:"
+echo ""
+echo "1. 📱 App Icon (Home Screen):"
+echo "   Replace: assets/images/icon.png"
+echo "   Size: 1024x1024 pixels"
+echo "   Format: PNG with transparent background"
+echo ""
+echo "2. 🚀 Splash Screen (Loading):"
+echo "   Replace: assets/images/splash-icon.png"  
+echo "   Size: 200x200 pixels"
+echo "   Format: PNG with transparent background"
+echo ""
+echo "3. 🤖 Android Adaptive Icons (Optional):"
+echo "   - assets/images/android-icon-foreground.png"
+echo "   - assets/images/android-icon-background.png"
+echo "   - assets/images/android-icon-monochrome.png"
+echo ""
+echo "4. 🌐 Web Favicon:"
+echo "   Replace: assets/images/favicon.png"
+echo "   Size: 48x48 pixels"
+echo ""
+echo "After replacing files, run: npx expo start --clear"
+echo ""
+echo "Current icons:"
+ls -la assets/images/icon.png assets/images/splash-icon.png 2>/dev/null || echo "❌ Icon files not found"
