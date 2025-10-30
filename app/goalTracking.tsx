@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Dimensions, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 interface Goal {
   id: number;
@@ -506,8 +506,9 @@ const goalTracking = () => {
   };
 
   return (
-    <View className="flex-1 bg-gray-50">
-      <ScrollView className="flex-1 pt-6" showsVerticalScrollIndicator={false}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View className="flex-1 bg-gray-50">
+        <ScrollView className="flex-1 pt-6" showsVerticalScrollIndicator={false}>
         {/* Header Stats */}
         <View className="px-4 mb-6">
           <View className="flex-row justify-between">
@@ -673,6 +674,8 @@ const goalTracking = () => {
                   onChangeText={setNewGoalTitle}
                   placeholder="e.g., Exercise daily, Read 30 minutes"
                   className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                  returnKeyType="next"
+                  blurOnSubmit={false}
                 />
               </View>
 
@@ -686,6 +689,8 @@ const goalTracking = () => {
                   numberOfLines={3}
                   className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
                   textAlignVertical="top"
+                  returnKeyType="next"
+                  blurOnSubmit={false}
                 />
               </View>
 
@@ -697,6 +702,9 @@ const goalTracking = () => {
                   placeholder="30"
                   keyboardType="numeric"
                   className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
+                  returnKeyType="done"
+                  onSubmitEditing={Keyboard.dismiss}
+                  blurOnSubmit={true}
                 />
               </View>
 
@@ -784,6 +792,7 @@ const goalTracking = () => {
         </View>
       </Modal>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 

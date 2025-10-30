@@ -2,7 +2,7 @@ import "@/globals.css";
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 
 interface JournalEntry {
@@ -147,8 +147,9 @@ const journaling = () => {
   };
 
   return (
-    <View className="flex-1 bg-gray-50">
-      <ScrollView className="flex-1 pt-6" showsVerticalScrollIndicator={false}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View className="flex-1 bg-gray-50">
+        <ScrollView className="flex-1 pt-6" showsVerticalScrollIndicator={false}>
         {/* Stats Cards */}
         <View className="px-4 py-4">
           <View className="flex-row justify-between mb-4">
@@ -297,6 +298,8 @@ const journaling = () => {
                     placeholderTextColor="#9CA3AF"
                     className="bg-gray-50 rounded-xl p-4 text-gray-800 text-base leading-6 min-h-[200px] mb-4"
                     textAlignVertical="top"
+                    returnKeyType="done"
+                    blurOnSubmit={true}
                   />
 
                   <View className="mb-6">
@@ -344,6 +347,7 @@ const journaling = () => {
         </View>
       </Modal>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 
