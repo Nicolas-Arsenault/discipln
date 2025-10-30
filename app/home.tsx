@@ -2,13 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGoals } from '../hooks/useGoals';
 import { Goal } from '../types';
 import { router } from 'expo-router';
 
 export default function Home() {
-  const insets = useSafeAreaInsets();
   const { goals, goalProgress, loadGoalsAndProgress, saveProgress } = useGoals();
   const [todayProgress, setTodayProgress] = useState<{ [goalId: number]: boolean }>({});
   const today = new Date().toISOString().split('T')[0];
@@ -101,10 +100,10 @@ export default function Home() {
   const completedToday = Object.values(todayProgress).filter(Boolean).length;
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={{ paddingHorizontal: 20, paddingTop: insets.top + 8, paddingBottom: 12 }}>
+        <View style={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12 }}>
           <Text style={{ 
             fontSize: 24, 
             fontWeight: '700', 
@@ -323,6 +322,6 @@ export default function Home() {
           )}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }

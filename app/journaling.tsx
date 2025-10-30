@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { Alert, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 
 interface JournalEntry {
@@ -147,11 +148,12 @@ const journaling = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className="flex-1 bg-gray-50">
-        <ScrollView className="flex-1 pt-6" showsVerticalScrollIndicator={false}>
-        {/* Stats Cards */}
-        <View className="px-4 py-4">
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View className="flex-1">
+          <ScrollView className="flex-1 pt-6" showsVerticalScrollIndicator={false}>
+            {/* Stats Cards */}
+            <View className="px-4 py-4">
           <View className="flex-row justify-between mb-4">
             <View className="bg-white rounded-xl p-4 flex-1 mr-2 shadow-sm border border-gray-100">
               <Text className="text-2xl font-bold text-gray-900">{getTotalEntries()}</Text>
@@ -345,9 +347,9 @@ const journaling = () => {
             </ScrollView>
           </View>
         </View>
-      </Modal>
-    </View>
-    </TouchableWithoutFeedback>
+      </Modal>        </View>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 };
 

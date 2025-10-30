@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Goal {
   id: number;
@@ -506,9 +507,10 @@ const goalTracking = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className="flex-1 bg-gray-50">
-        <ScrollView className="flex-1 pt-6" showsVerticalScrollIndicator={false}>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View className="flex-1">
+          <ScrollView className="flex-1 pt-6" showsVerticalScrollIndicator={false}>
         {/* Header Stats */}
         <View className="px-4 mb-6">
           <View className="flex-row justify-between">
@@ -791,8 +793,9 @@ const goalTracking = () => {
           </View>
         </View>
       </Modal>
-    </View>
-    </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 };
 
