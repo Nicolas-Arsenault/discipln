@@ -60,18 +60,9 @@ class NotificationService {
     }
   }
 
-  async hasPermissions(): Promise<boolean> {
-    try {
-      const { status } = await Notifications.getPermissionsAsync();
-      return status === 'granted';
-    } catch (error) {
-      return false;
-    }
-  }
-
   async scheduleTaskNotification(task: TaskNotification): Promise<string | null> {
     try {
-      const hasPermission = await this.hasPermissions();
+      const hasPermission = await this.requestPermissions();
       if (!hasPermission) {
         return null;
       }

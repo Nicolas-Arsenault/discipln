@@ -8,6 +8,7 @@ export default function TabLayout() {
     <SafeAreaProvider>
       <Tabs
       screenOptions={{
+        headerShown: false,
         tabBarActiveTintColor: '#1f2937',
         tabBarInactiveTintColor: '#9ca3af',
         tabBarStyle: {
@@ -32,31 +33,12 @@ export default function TabLayout() {
         tabBarIconStyle: {
           marginTop: 2,
         },
-        headerStyle: {
-          backgroundColor: '#1f2937',
-          shadowColor: '#000000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.08,
-          shadowRadius: 12,
-          elevation: 8,
-          borderBottomWidth: 0,
-        },
-        headerTitleStyle: {
-          fontSize: 24,
-          fontWeight: '300',
-          color: '#f8fafc',
-          letterSpacing: 2,
-          fontFamily: 'System',
-          textTransform: 'uppercase',
-        },
-        headerTitleAlign: 'center',
       }}
     >
       <Tabs.Screen
         name="home"
         options={{
           title: 'Home',
-          headerTitle: 'Discipln',
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons 
               name={focused ? "home" : "home-outline"} 
@@ -70,7 +52,6 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Routine',
-          headerTitle: 'Discipln',
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons 
               name={focused ? "calendar" : "calendar-outline"} 
@@ -84,7 +65,6 @@ export default function TabLayout() {
         name="journaling"
         options={{
           title: 'Journal',
-          headerTitle: 'Discipln',
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons 
               name={focused ? "book" : "book-outline"} 
@@ -98,7 +78,6 @@ export default function TabLayout() {
         name="goalTracking"
         options={{
           title: 'Goals',
-          headerTitle: 'Discipln',
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons 
               name={focused ? "flag" : "flag-outline"} 

@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Dimensions, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 interface Goal {
   id: number;
@@ -422,7 +422,7 @@ const goalTracking = () => {
             <Text className="text-xs text-gray-500">active days</Text>
           </View>
           <View className="items-center">
-            <Text className="text-sm font-bold text-gray-900">
+            <Text className="text-sm font-bold text-blue-600">
               {Math.round((yearData.filter(day => day.intensity > 0).length / 180) * 100)}%
             </Text>
             <Text className="text-xs text-gray-500">consistency</Text>
@@ -522,7 +522,7 @@ const goalTracking = () => {
               <Text className="text-sm text-gray-500">Total Days</Text>
             </View>
             <View className="bg-white rounded-xl p-4 flex-1 ml-2 shadow-sm border border-gray-100">
-              <Text className="text-2xl font-bold text-gray-900">
+              <Text className="text-2xl font-bold text-blue-600">
                 {goals.length > 0 ? Math.round(goals.reduce((acc, goal) => acc + getGoalStats(goal.id).percentage, 0) / goals.length) : 0}%
               </Text>
               <Text className="text-sm text-gray-500">Avg Progress</Text>
@@ -626,11 +626,11 @@ const goalTracking = () => {
                       <Text className="text-xs text-gray-500">Day Streak</Text>
                     </View>
                     <View className="items-center">
-                      <Text className="text-lg font-bold text-gray-900">{Math.round(stats.percentage)}%</Text>
+                      <Text className="text-lg font-bold text-blue-600">{Math.round(stats.percentage)}%</Text>
                       <Text className="text-xs text-gray-500">Complete</Text>
                     </View>
                     <View className="items-center">
-                      <Text className="text-lg font-bold text-gray-900">{stats.completedDays}</Text>
+                      <Text className="text-lg font-bold text-purple-600">{stats.completedDays}</Text>
                       <Text className="text-xs text-gray-500">Total Days</Text>
                     </View>
                   </View>
@@ -656,10 +656,8 @@ const goalTracking = () => {
         transparent={true}
         onRequestClose={() => setIsCreateModalVisible(false)}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View className="flex-1 shadow justify-end">
-            <TouchableWithoutFeedback onPress={() => {}}>
-              <View className="bg-white rounded-t-3xl p-6 max-h-[90%]">
+        <View className="flex-1 shadow justify-end">
+          <View className="bg-white rounded-t-3xl p-6 max-h-[90%] min-h-[90%]">
             <View className="flex-row justify-between items-center mb-6">
               <Text className="text-xl font-bold text-gray-900">Create New Goal</Text>
               <Pressable onPress={() => setIsCreateModalVisible(false)}>
@@ -675,9 +673,6 @@ const goalTracking = () => {
                   onChangeText={setNewGoalTitle}
                   placeholder="e.g., Exercise daily, Read 30 minutes"
                   className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
-                  returnKeyType="done"
-                  onSubmitEditing={Keyboard.dismiss}
-                  blurOnSubmit={true}
                 />
               </View>
 
@@ -691,8 +686,6 @@ const goalTracking = () => {
                   numberOfLines={3}
                   className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
                   textAlignVertical="top"
-                  returnKeyType="done"
-                  blurOnSubmit={true}
                 />
               </View>
 
@@ -704,9 +697,6 @@ const goalTracking = () => {
                   placeholder="30"
                   keyboardType="numeric"
                   className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900"
-                  returnKeyType="done"
-                  onSubmitEditing={Keyboard.dismiss}
-                  blurOnSubmit={true}
                 />
               </View>
 
@@ -740,10 +730,8 @@ const goalTracking = () => {
                 <Text className="text-white font-semibold text-base">Create Goal</Text>
               </Pressable>
             </ScrollView>
-              </View>
-            </TouchableWithoutFeedback>
           </View>
-        </TouchableWithoutFeedback>
+        </View>
       </Modal>
 
       {/* Progress Chart Modal */}
@@ -753,10 +741,8 @@ const goalTracking = () => {
         transparent={true}
         onRequestClose={() => setIsProgressModalVisible(false)}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View className="flex-1 bg-black/50 justify-center px-4">
-            <TouchableWithoutFeedback onPress={() => {}}>
-              <View className="bg-white rounded-3xl p-6 max-h-[80%]">
+        <View className="flex-1 bg-black/50 justify-center px-4">
+          <View className="bg-white rounded-3xl p-6 max-h-[80%]">
             <View className="flex-row justify-between items-center mb-6">
               <Text className="text-xl font-bold text-gray-900">
                 {selectedGoal?.title}
@@ -794,10 +780,8 @@ const goalTracking = () => {
                 </View>
               </ScrollView>
             )}
-              </View>
-            </TouchableWithoutFeedback>
           </View>
-        </TouchableWithoutFeedback>
+        </View>
       </Modal>
     </View>
   );

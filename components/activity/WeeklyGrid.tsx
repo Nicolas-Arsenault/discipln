@@ -43,39 +43,69 @@ export default function WeeklyGrid({
     <ScrollView 
       horizontal 
       showsHorizontalScrollIndicator={false} 
-      className="flex-1"
+      style={{ flex: 1 }}
       contentContainerStyle={{ paddingRight: 24 }}
     >
-      <View className="flex-row">
+      <View style={{ flexDirection: 'row' }}>
         {weekDays.map((day, dayIndex) => {
           const dayActivities = getActivitiesForDay(day);
           
           return (
             <View key={day} style={{ width: 260, marginRight: dayIndex === weekDays.length - 1 ? 0 : 16 }}>
               {/* Day Header */}
-              <View className="bg-white rounded-2xl p-4 mb-3 border border-gray-100 shadow-sm">
-                <Text className="text-lg font-bold text-gray-900 text-center capitalize">
+              <View style={{ 
+                backgroundColor: '#FFFFFF', 
+                borderRadius: 16, 
+                padding: 16, 
+                marginBottom: 12,
+                borderWidth: 1,
+                borderColor: '#E2E8F0',
+                shadowColor: '#000',
+                shadowOpacity: 0.05,
+                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 2 }
+              }}>
+                <Text style={{ 
+                  fontSize: 18, 
+                  fontWeight: '700', 
+                  color: '#1E293B', 
+                  textAlign: 'center',
+                  textTransform: 'capitalize'
+                }}>
                   {day}
                 </Text>
-                <Text className="text-xs text-gray-500 text-center mt-0.5">
+                <Text style={{ 
+                  fontSize: 12, 
+                  color: '#64748B', 
+                  textAlign: 'center',
+                  marginTop: 2
+                }}>
                   {dayActivities.length} {dayActivities.length === 1 ? 'activity' : 'activities'}
                 </Text>
               </View>
 
               {/* Activities Column */}
               <ScrollView 
-                className="flex-1"
-                style={{ maxHeight: 600 }}
+                style={{ flex: 1, maxHeight: 600 }}
                 showsVerticalScrollIndicator={false}
               >
                 {dayActivities.length === 0 ? (
                   <Pressable
                     onPress={() => onAddActivity(day)}
-                    className="bg-gray-50 rounded-xl p-5 items-center justify-center border-2 border-dashed border-gray-300"
-                    style={{ minHeight: 120 }}
+                    style={{
+                      backgroundColor: '#F8FAFC',
+                      borderRadius: 12,
+                      padding: 20,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: '#CBD5E1',
+                      borderStyle: 'dashed',
+                      minHeight: 120
+                    }}
                   >
-                    <Text className="text-2xl text-gray-400 mb-2">+</Text>
-                    <Text className="text-sm text-gray-500 text-center">
+                    <Text style={{ fontSize: 24, color: '#94A3B8', marginBottom: 8 }}>+</Text>
+                    <Text style={{ fontSize: 14, color: '#64748B', textAlign: 'center' }}>
                       Add activity
                     </Text>
                   </Pressable>
@@ -84,17 +114,37 @@ export default function WeeklyGrid({
                     {dayActivities.map((activity, index) => (
                       <Pressable
                         key={activity.id}
-                        className="bg-gray-50 border-l-4 border-gray-900 rounded-xl p-3 mb-2 shadow-sm"
+                        style={{
+                          backgroundColor: '#EEF2FF',
+                          borderLeftWidth: 4,
+                          borderLeftColor: '#4F46E5',
+                          borderRadius: 12,
+                          padding: 12,
+                          marginBottom: 8,
+                          shadowColor: '#4F46E5',
+                          shadowOpacity: 0.1,
+                          shadowRadius: 4,
+                          shadowOffset: { width: 0, height: 2 },
+                        }}
                         onPress={() => onEditActivity(activity.id)}
                       >
                         <Text 
-                          className="font-bold text-gray-900 text-sm mb-1"
+                          style={{ 
+                            fontWeight: '700', 
+                            color: '#1E293B', 
+                            fontSize: 15, 
+                            marginBottom: 4 
+                          }} 
                           numberOfLines={2} 
                           ellipsizeMode="tail"
                         >
                           {activity.title}
                         </Text>
-                        <Text className="text-gray-600 text-xs font-semibold">
+                        <Text style={{ 
+                          color: '#4F46E5', 
+                          fontSize: 12, 
+                          fontWeight: '600' 
+                        }}>
                           {formatTime(activity.startHour, activity.startMinute)} - {formatTime(activity.endHour, activity.endMinute)}
                         </Text>
                       </Pressable>
@@ -103,10 +153,19 @@ export default function WeeklyGrid({
                     {/* Add button at bottom of activities */}
                     <Pressable
                       onPress={() => onAddActivity(day)}
-                      className="bg-gray-100 rounded-xl p-4 items-center justify-center border border-gray-200 mt-1"
+                      style={{
+                        backgroundColor: '#F1F5F9',
+                        borderRadius: 12,
+                        padding: 16,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 1,
+                        borderColor: '#CBD5E1',
+                        marginTop: 4
+                      }}
                     >
-                      <Text className="text-lg text-gray-500 mb-1">+</Text>
-                      <Text className="text-xs text-gray-500">Add activity</Text>
+                      <Text style={{ fontSize: 18, color: '#64748B', marginBottom: 4 }}>+</Text>
+                      <Text style={{ fontSize: 12, color: '#64748B' }}>Add activity</Text>
                     </Pressable>
                   </>
                 )}
