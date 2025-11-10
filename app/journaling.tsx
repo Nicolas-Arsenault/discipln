@@ -1,10 +1,11 @@
 import "@/globals.css";
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface JournalEntry {
   date: string;
@@ -14,6 +15,7 @@ interface JournalEntry {
 }
 
 const journaling = () => {
+  const insets = useSafeAreaInsets();
   const [journalEntries, setJournalEntries] = useState<Record<string, JournalEntry>>({});
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -21,10 +23,22 @@ const journaling = () => {
   const [disciplineScore, setDisciplineScore] = useState(5);
   const [viewingEntry, setViewingEntry] = useState<JournalEntry | null>(null);
   const [isViewingMode, setIsViewingMode] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     loadJournalEntries();
   }, []);
+
+  // Refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadJournalEntries();
+      // Reset scroll position to top when screen comes into focus
+      setTimeout(() => {
+        scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+      }, 100);
+    }, [])
+  );
 
   const loadJournalEntries = async () => {
     try {
@@ -148,87 +162,91 @@ const journaling = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View className="flex-1">
-          <ScrollView className="flex-1 pt-6" showsVerticalScrollIndicator={false}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+        <ScrollView 
+          ref={scrollViewRef}
+          style={{ flex: 1 }} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingTop: 24, paddingBottom: 100 }}
+        >
             {/* Stats Cards */}
-            <View className="px-4 py-4">
-          <View className="flex-row justify-between mb-4">
-            <View className="bg-white rounded-xl p-4 flex-1 mr-2 shadow-sm border border-gray-100">
-              <Text className="text-2xl font-bold text-gray-900">{getTotalEntries()}</Text>
-              <Text className="text-sm text-gray-500">Total Entries</Text>
+            <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 16, paddingBottom: 16 }}>
+              <View className="flex-row justify-between mb-4">
+                <View className="bg-white rounded-xl p-4 flex-1 mr-2 shadow-sm border border-gray-100">
+                  <Text className="text-2xl font-bold text-gray-900">{getTotalEntries()}</Text>
+                  <Text className="text-sm text-gray-500">Total Entries</Text>
+                </View>
+                <View className="bg-white rounded-xl p-4 flex-1 mx-1 shadow-sm border border-gray-100">
+                  <Text className="text-2xl font-bold text-gray-900">{getCurrentStreak()}</Text>
+                  <Text className="text-sm text-gray-500">Day Streak</Text>
+                </View>
+                <View className="bg-white rounded-xl p-4 flex-1 ml-2 shadow-sm border border-gray-100">
+                  <Text className="text-2xl font-bold text-gray-900">{getAverageDiscipline()}</Text>
+                  <Text className="text-sm text-gray-500">Avg Discipline</Text>
+                </View>
+              </View>
             </View>
-            <View className="bg-white rounded-xl p-4 flex-1 mx-1 shadow-sm border border-gray-100">
-              <Text className="text-2xl font-bold text-gray-900">{getCurrentStreak()}</Text>
-              <Text className="text-sm text-gray-500">Day Streak</Text>
-            </View>
-            <View className="bg-white rounded-xl p-4 flex-1 ml-2 shadow-sm border border-gray-100">
-              <Text className="text-2xl font-bold text-gray-900">{getAverageDiscipline()}</Text>
-              <Text className="text-sm text-gray-500">Avg Discipline</Text>
-            </View>
-          </View>
-        </View>
 
-        {/* Calendar Header */}
-        <View className="mx-4 mb-2">
-          <Text className="text-lg font-semibold text-gray-900 mb-1">Journal Calendar</Text>
-        </View>
+            {/* Calendar Header */}
+            <View className="mx-4 mb-2">
+              <Text className="text-lg font-semibold text-gray-900 mb-1">Journal Calendar</Text>
+            </View>
 
-        {/* Calendar */}
-        <View className="bg-white mx-4 rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
-          {/* Tap instruction banner */}
-          <View className="bg-gradient-to-r from-green-50 to-blue-50 px-4 py-3 border-b border-gray-100">
-            <View className="flex-row items-center justify-center">
-              <Ionicons name="finger-print" size={16} color="#22c55e" />
-              <Text className="text-sm font-medium text-gray-700 ml-2">
-                Tap any date below to start journaling
-              </Text>
-            </View>
-          </View>
+            {/* Calendar */}
+            <View className="bg-white mx-4 rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
+              {/* Tap instruction banner */}
+              <View className="bg-gradient-to-r from-green-50 to-blue-50 px-4 py-3 border-b border-gray-100">
+                <View className="flex-row items-center justify-center">
+                  <Ionicons name="finger-print" size={16} color="#22c55e" />
+                  <Text className="text-sm font-medium text-gray-700 ml-2">
+                    Tap any date below to start journaling
+                  </Text>
+                </View>
+              </View>
 
-          <Calendar
-            onDayPress={handleDatePress}
-            markedDates={getMarkedDates()}
-            theme={{
-              backgroundColor: '#ffffff',
-              calendarBackground: '#ffffff',
-              textSectionTitleColor: '#374151',
-              selectedDayBackgroundColor: '#22c55e',
-              selectedDayTextColor: '#ffffff',
-              todayTextColor: '#2563eb',
-              todayBackgroundColor: '#dbeafe',
-              dayTextColor: '#374151',
-              textDisabledColor: '#d1d5db',
-              arrowColor: '#1f2937',
-              monthTextColor: '#1f2937',
-              indicatorColor: '#22c55e',
-              textDayFontWeight: '500',
-              textMonthFontWeight: '600',
-              textDayHeaderFontWeight: '500',
-            }}
-          />
-        </View>
+              <Calendar
+                onDayPress={handleDatePress}
+                markedDates={getMarkedDates()}
+                theme={{
+                  backgroundColor: '#ffffff',
+                  calendarBackground: '#ffffff',
+                  textSectionTitleColor: '#374151',
+                  selectedDayBackgroundColor: '#22c55e',
+                  selectedDayTextColor: '#ffffff',
+                  todayTextColor: '#2563eb',
+                  todayBackgroundColor: '#dbeafe',
+                  dayTextColor: '#374151',
+                  textDisabledColor: '#d1d5db',
+                  arrowColor: '#1f2937',
+                  monthTextColor: '#1f2937',
+                  indicatorColor: '#22c55e',
+                  textDayFontWeight: '500',
+                  textMonthFontWeight: '600',
+                  textDayHeaderFontWeight: '500',
+                }}
+              />
+            </View>
 
-        {/* Legend */}
-        <View className="bg-white mx-4 rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
-          <Text className="text-base font-semibold text-gray-900 mb-3">Legend</Text>
-          <View className="space-y-2">
-            <View className="flex-row items-center">
-              <View className="w-4 h-4 rounded-full bg-green-500 mr-3"></View>
-              <Text className="text-sm text-gray-600">Dates with journal entries</Text>
+            {/* Legend */}
+            <View className="bg-white mx-4 rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
+              <Text className="text-base font-semibold text-gray-900 mb-3">Legend</Text>
+              <View className="space-y-2">
+                <View className="flex-row items-center">
+                  <View className="w-4 h-4 rounded-full bg-green-500 mr-3"></View>
+                  <Text className="text-sm text-gray-600">Dates with journal entries</Text>
+                </View>
+                <View className="flex-row items-center">
+                  <View className="w-4 h-4 rounded border-2 border-blue-400 bg-blue-50 mr-3"></View>
+                  <Text className="text-sm text-gray-600">Today</Text>
+                </View>
+                <View className="flex-row items-center">
+                  <View className="w-4 h-4 rounded border border-gray-300 mr-3"></View>
+                  <Text className="text-sm text-gray-600">Available dates (tap to journal)</Text>
+                </View>
+              </View>
             </View>
-            <View className="flex-row items-center">
-              <View className="w-4 h-4 rounded border-2 border-blue-400 bg-blue-50 mr-3"></View>
-              <Text className="text-sm text-gray-600">Today</Text>
-            </View>
-            <View className="flex-row items-center">
-              <View className="w-4 h-4 rounded border border-gray-300 mr-3"></View>
-              <Text className="text-sm text-gray-600">Available dates (tap to journal)</Text>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
+          </ScrollView>
 
       {/* Entry Modal */}
       <Modal
@@ -347,9 +365,9 @@ const journaling = () => {
             </ScrollView>
           </View>
         </View>
-      </Modal>        </View>
-      </TouchableWithoutFeedback>
-    </SafeAreaView>
+      </Modal>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

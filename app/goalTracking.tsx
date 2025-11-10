@@ -2,9 +2,9 @@ import "@/globals.css";
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Dimensions, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Goal {
   id: number;
@@ -23,6 +23,7 @@ interface GoalProgress {
 }
 
 const goalTracking = () => {
+  const insets = useSafeAreaInsets();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [goalProgress, setGoalProgress] = useState<GoalProgress[]>([]);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
@@ -36,6 +37,7 @@ const goalTracking = () => {
   const [newGoalCategory, setNewGoalCategory] = useState<Goal['category']>('personal');
 
   const screenWidth = Dimensions.get('window').width;
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     loadGoalsAndProgress();
@@ -45,6 +47,10 @@ const goalTracking = () => {
   useFocusEffect(
     useCallback(() => {
       loadGoalsAndProgress();
+      // Reset scroll position to top when screen comes into focus
+      setTimeout(() => {
+        scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+      }, 100);
     }, [])
   );
 
@@ -507,12 +513,16 @@ const goalTracking = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View className="flex-1">
-          <ScrollView className="flex-1 pt-6" showsVerticalScrollIndicator={false}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+        <ScrollView 
+          ref={scrollViewRef}
+          style={{ flex: 1 }} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingTop: 24, paddingBottom: 100 }}
+        >
         {/* Header Stats */}
-        <View className="px-4 mb-6">
+        <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 8, paddingBottom: 24 }}>
           <View className="flex-row justify-between">
             <View className="bg-white rounded-xl p-4 flex-1 mr-2 shadow-sm border border-gray-100">
               <Text className="text-2xl font-bold text-gray-900">{goals.length}</Text>
@@ -793,9 +803,8 @@ const goalTracking = () => {
           </View>
         </View>
       </Modal>
-        </View>
-      </TouchableWithoutFeedback>
-    </SafeAreaView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
